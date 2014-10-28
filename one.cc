@@ -9,23 +9,31 @@ int one_main(int argc, char *argv[]) {
 
   std::string line;
   for(auto file : args.file_arg) {
-    std::ifstream is(file);
-    int c;
+    try {
+      std::ifstream is;
+      is.exceptions(std::ios::failbit|std::ios::badbit);
+      is.open(file);
 
-    if(is.peek() == '>') {
-      std::getline(is, line);
-      std::cout << line << '\n';
-    }
+      int c;
 
-    while(true) {
-      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+      if(is.peek() == '>') {
+        std::getline(is, line);
+        std::cout << line << '\n';
+      }
+
+      while(true) {
+        for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
           std::getline(is, line);
           std::cout << line;
+        }
+        std::cout << '\n';
+        if(c == EOF) break;
+        std::getline(is, line);
+        std::cout << line << '\n';
       }
-      std::cout << '\n';
-      if(c == EOF) break;
-      std::getline(is, line);
-      std::cout << line << '\n';
+    } catch(std::ios::failure) {
+      std::cerr << "Error with file '" << file << '\'' << std::endl;
+      return EXIT_FAILURE;
     }
   }
 

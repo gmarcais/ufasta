@@ -1,6 +1,6 @@
 include_rules
 
-CXXFLAGS = -Wall -Werror -I.
+CXXFLAGS = -std=c++0x -Wall -Werror -I.
 LDFLAGS = -lboost_regex
 CMDLINES = hgrep_cmdline.yaggo one_cmdline.yaggo
 MAINS = ufasta.cc hgrep.cc one.cc

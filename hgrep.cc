@@ -23,26 +23,33 @@ int hgrep_main(int argc, char *argv[]) {
   size_t max_count = args.max_count_given ? args.max_count_arg : std::numeric_limits<size_t>::max();
   std::string line;
   for(auto file : args.file_arg) {
-    std::ifstream is(file);
-    bool          skip = true;
-    int           c;
-    while(true) {
-      if(skip) {
-        for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
-          is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      } else {
-        for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
-          std::getline(is, line);
+    try {
+      std::ifstream is;
+      is.exceptions(std::ios::failbit|std::ios::badbit);
+      is.open(file);
+      bool          skip = true;
+      int           c;
+      while(true) {
+        if(skip) {
+          for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
+            is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        } else {
+          for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+            std::getline(is, line);
+            std::cout << line << '\n';
+          }
+        }
+        if(c == EOF) break;
+        std::getline(is, line);
+        skip = !regex_search(++line.cbegin(), line.cend(), regexp) ^ args.invert_match_flag;
+        if(!skip) {
+          if(max_count-- == 0) break;
           std::cout << line << '\n';
         }
       }
-      if(c == EOF) break;
-      std::getline(is, line);
-      skip = !regex_search(++line.cbegin(), line.cend(), regexp) ^ args.invert_match_flag;
-      if(!skip) {
-        if(max_count-- == 0) break;
-        std::cout << line << '\n';
-      }
+    } catch(std::ios::failure) {
+      std::cerr << "Error with file '" << file << '\'' << std::endl;
+      return EXIT_FAILURE;
     }
   }
 
