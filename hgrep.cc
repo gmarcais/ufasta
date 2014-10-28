@@ -20,6 +20,7 @@ int hgrep_main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
+  size_t max_count = args.max_count_given ? args.max_count_arg : std::numeric_limits<size_t>::max();
   std::string line;
   for(auto file : args.file_arg) {
     std::ifstream is(file);
@@ -37,9 +38,11 @@ int hgrep_main(int argc, char *argv[]) {
       }
       if(c == EOF) break;
       std::getline(is, line);
-      skip = !regex_search(++line.cbegin(), line.cend(), regexp);
-      if(!skip)
+      skip = !regex_search(++line.cbegin(), line.cend(), regexp) ^ args.invert_match_flag;
+      if(!skip) {
+        if(max_count-- == 0) break;
         std::cout << line << '\n';
+      }
     }
   }
 
