@@ -1,0 +1,8 @@
+description "Display the sizes of the sequences in fasta file"
+
+option("H", "header") {
+  description "Print headers before size"
+  off }
+arg("file") {
+  description "Input fasta file"
+  c_string; multiple; at_least 1 }

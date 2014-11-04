@@ -5,6 +5,7 @@ typedef int (main_func_t)(int argc, char *argv[]);
 
 main_func_t hgrep_main;
 main_func_t one_main;
+main_func_t sizes_main;
 
 main_func_t sos;
 main_func_t version;
@@ -16,6 +17,7 @@ struct cmd_func {
 cmd_func cmd_list[] = {
   {"hgrep",             &hgrep_main},
   {"one",               &one_main},
+  {"sizes",             &sizes_main},
 
   /* help in all its form. Must be first non-command */
   {"help",              &sos},
