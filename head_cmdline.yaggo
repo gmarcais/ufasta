@@ -1,0 +1,14 @@
+description "Output the head of fasta files"
+
+option("n", "entries") {
+  description "Print the first K entries. With a leading -, print all but the last K entries."
+  int; typestr "[-]K"; default 10 }
+option("q", "quiet") {
+  description "Never print headers giving file names"
+  off }
+option("v", "verbose") {
+  description "Always print headers giving file names"
+  off }
+arg("file") {
+  description "Input fasta file"
+  c_string; multiple; at_least 1 }

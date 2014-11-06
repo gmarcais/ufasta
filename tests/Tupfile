@@ -1,0 +1,1 @@
+: foreach test_head.sh | test1.fasta ../ufasta |> ./%f >%o 2>&1 |> %B.log
