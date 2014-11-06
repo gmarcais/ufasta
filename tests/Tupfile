@@ -1,1 +1,3 @@
-: foreach test_head.sh | test1.fasta ../ufasta |> ./%f >%o 2>&1 |> %B.log
+TESTS = test_head.sh test_tail.sh
+
+: foreach $(TESTS) | test1.fasta ../ufasta |> ./%f >%o 2>&1 |> %B.log
