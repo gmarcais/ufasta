@@ -2,8 +2,8 @@ include_rules
 
 CXXFLAGS = -std=c++0x -Wall -Werror -I.
 LDFLAGS = -lboost_regex
-CMDLINES = hgrep_cmdline.yaggo one_cmdline.yaggo sizes_cmdline.yaggo head_cmdline.yaggo tail_cmdline.yaggo
-MAINS = ufasta.cc hgrep.cc one.cc sizes.cc head.cc tail.cc
+CMDLINES = hgrep_cmdline.yaggo one_cmdline.yaggo sizes_cmdline.yaggo head_cmdline.yaggo tail_cmdline.yaggo rc_cmdline.yaggo
+MAINS = ufasta.cc hgrep.cc one.cc sizes.cc head.cc tail.cc rc.cc
 
 : foreach $(CMDLINES)           |> !yaggo |> {cmdlines}
 : foreach $(MAINS) | {cmdlines} |> !cxx   |> {mains}
