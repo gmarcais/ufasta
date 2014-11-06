@@ -4,12 +4,58 @@
 
 #include <head_cmdline.hpp>
 
-int head_negative(const head_cmdline& args) {
-  std::cerr << "Not implemented" << std::endl;
-  return EXIT_FAILURE;
+struct entry {
+  int                      size;
+  std::vector<std::string> lines;
+  void add_line(std::istream& is) {
+    if(size >= (int)lines.size())
+      lines.push_back("");
+    std::getline(is, lines[size]);
+    ++size;
+  }
+};
+
+static int head_negative(const head_cmdline& args) {
+  int                res     = EXIT_SUCCESS;
+  const int          entries = abs(args.entries_arg);
+  std::vector<entry> cache(entries);
+
+  for(const auto& file : args.file_arg) {
+    try {
+      std::ifstream is;
+      is.exceptions(std::ios::failbit|std::ios::badbit);
+      is.open(file);
+      if((args.file_arg.size() > 1 && !args.quiet_flag) || args.verbose_flag)
+        std::cout << "==> " << file << " <==\n";
+
+      int cz = 0; // cache size
+      // Read into cache
+      int c  = is.peek();
+      for(int i = 0; c != EOF; cz = std::min(cz + 1, entries), i = (i + 1) % entries) {
+        entry& ce = cache[i];
+        if(cz == entries) { // Print with a delay
+          for(int j = 0; j < ce.size; ++j)
+            std::cout << ce.lines[j] << '\n';
+        }
+        ce.size = 0;
+        if(c == '>') {
+          ce.add_line(is);
+          c = is.peek();
+        }
+        for( ; c != '>' && c != EOF; c = is.peek())
+          ce.add_line(is);
+      }
+
+    } catch(std::ios::failure) {
+      std::cerr << "Error with file '" << file << '\'' << std::endl;
+      res = EXIT_FAILURE;
+    }
+  }
+
+  return res;
 }
 
-int head_positive(const head_cmdline& args) {
+static int head_positive(const head_cmdline& args) {
   int res = EXIT_SUCCESS;
 
   std::string line;
