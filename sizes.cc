@@ -17,7 +17,7 @@ int sizes_main(int argc, char *argv[]) {
 
       int c;
 
-      // Skill whatever is before first '>'
+      // Skip whatever is before first '>'
       while((c = is.peek()) != '>' && c != EOF)
         skip_line(is);
 

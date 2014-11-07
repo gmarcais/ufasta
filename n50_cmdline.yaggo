@@ -1,0 +1,26 @@
+purpose "Compute N50 and other statistics"
+
+description <<EOS
+If no -N or -E switch is passed, it computes the N50. Otherwise
+compute all the statistics asked for. The E-size is always displayed
+last.
+EOS
+
+option("H", "no-header") {
+  description "Do not display header"
+  off }
+option("s", "size") {
+  description "Use N as size of genome, instead of total size in files"
+  uint64; typestr "N"; suffix }
+option("N") {
+  description "Compute Nx statistic"
+  uint32; typestr "x"; multiple }
+option("E", "Esize") {
+  description "Compute the E-size"
+  off }
+option("S", "sum") {
+  description "Sum of size of all entries"
+  off }
+arg("file") {
+  description "Input fasta file"
+  c_string; multiple; at_least 1 }
