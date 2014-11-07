@@ -96,6 +96,11 @@ int n50_main(int argc, char *argv[]) {
       std::cout << "S ";
     std::cout << sum_size << '\n';
   }
+  if(args.average_flag) {
+    if(!args.no_header_flag)
+      std::cout << "A ";
+    std::cout << ((double)sum_size / sizes.size()) << "\n";
+  }
   if(args.Esize_flag) {
     if(!args.no_header_flag)
       std::cout << "E ";

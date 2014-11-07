@@ -19,7 +19,10 @@ option("E", "Esize") {
   description "Compute the E-size"
   off }
 option("S", "sum") {
-  description "Sum of size of all entries"
+  description "COmpute sum of size of all entries"
+  off }
+option("A", "average") {
+  description "Compute average length of all entries"
   off }
 arg("file") {
   description "Input fasta file"
