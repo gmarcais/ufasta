@@ -1,3 +1,7 @@
+#include <signal.h>
+#include <unistd.h>
+
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 
@@ -71,9 +75,23 @@ int version(int argc, char *argv[])
   return 0;
 }
 
+void sigpipe_handler(int sig) {
+  _exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
   std::string error;
+
+  // Ignore SIGPIPE. It causes ufasta to fail if output is sent to a
+  // pipe, which is not very useful for us. Simply exit successfully.
+  {
+    struct sigaction sig;
+    memset(&sig, '\0', sizeof(sig));
+    sig.sa_handler = sigpipe_handler;
+    if(sigaction(SIGPIPE, &sig, nullptr) == -1)
+      perror("sigaction");
+  }
 
   if(argc < 2) {
     error = "Too few arguments";
@@ -89,5 +107,5 @@ int main(int argc, char *argv[])
 
   std::cerr << error << std::endl;
   __sos(&std::cerr);
-  return 1;
+  return EXIT_FAILURE;
 }
