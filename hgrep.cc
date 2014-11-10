@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <boost/regex.hpp>
 
+#include "common.hpp"
 #include <hgrep_cmdline.hpp>
 
 
@@ -29,22 +30,25 @@ int hgrep_main(int argc, char *argv[]) {
       is.open(file);
       bool          skip = true;
       int           c;
-      while(true) {
+      // Display unchanged up to first header
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+        std::getline(is, line);
+        std::cout << line << '\n';
+      }
+
+      while(c != EOF) {
+        std::getline(is, line);
+        skip = !regex_search(++line.cbegin(), line.cend(), regexp) ^ args.invert_match_flag;
         if(skip) {
           for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
-            is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            skip_line(is);
         } else {
+          if(max_count-- == 0) break;
+          std::cout << line << '\n';
           for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
             std::getline(is, line);
             std::cout << line << '\n';
           }
-        }
-        if(c == EOF) break;
-        std::getline(is, line);
-        skip = !regex_search(++line.cbegin(), line.cend(), regexp) ^ args.invert_match_flag;
-        if(!skip) {
-          if(max_count-- == 0) break;
-          std::cout << line << '\n';
         }
       }
     } catch(std::ios::failure) {

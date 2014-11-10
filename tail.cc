@@ -18,6 +18,9 @@ struct entry {
   }
 };
 
+// With a positive number, display the last N lines. Store lines in a
+// circular buffer. Display content of circular buffer when reached
+// the end of the input.
 static int tail_positive(const tail_cmdline& args, int entries) {
   int                res = EXIT_SUCCESS;
   std::vector<entry> cache(entries);
@@ -30,17 +33,21 @@ static int tail_positive(const tail_cmdline& args, int entries) {
       if((args.file_arg.size() > 1 && !args.quiet_flag) || args.verbose_flag)
         std::cout << "==> " << file << " <==\n";
 
+      int c;
+      // Display unchanged up to first header
+      std::string line;
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+        std::getline(is, line);
+        std::cout << line << '\n';
+      }
+
       int cz = 0; // cache size
       // Read into cache
-      int c  = is.peek();
       for(int i = 0; c != EOF; cz = std::min(cz + 1, entries), i = (i + 1) % entries) {
         entry& ce = cache[i];
         ce.size = 0;
-        if(c == '>') {
-          ce.add_line(is);
-          c = is.peek();
-        }
-        for( ; c != '>' && c != EOF; c = is.peek())
+        ce.add_line(is);
+        for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
           ce.add_line(is);
       }
 

@@ -15,21 +15,21 @@ int one_main(int argc, char *argv[]) {
       is.open(file);
 
       int c;
-
-      if(is.peek() == '>') {
+      // Display unchanged up to first header
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
         std::getline(is, line);
         std::cout << line << '\n';
       }
 
-      while(true) {
+      while(c != EOF) {
+        std::getline(is, line); // Header
+        std::cout << line << '\n';
+
         for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
           std::getline(is, line);
           std::cout << line;
         }
         std::cout << '\n';
-        if(c == EOF) break;
-        std::getline(is, line);
-        std::cout << line << '\n';
       }
     } catch(std::ios::failure) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;

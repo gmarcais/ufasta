@@ -15,6 +15,9 @@ struct entry {
   }
 };
 
+// With a negative value, display all but the last N entries of a
+// file. Store the entries in a circular buffer of size N. Any
+// overflow get printed out.
 static int head_negative(const head_cmdline& args) {
   int                res     = EXIT_SUCCESS;
   const int          entries = abs(args.entries_arg);
@@ -28,21 +31,24 @@ static int head_negative(const head_cmdline& args) {
       if((args.file_arg.size() > 1 && !args.quiet_flag) || args.verbose_flag)
         std::cout << "==> " << file << " <==\n";
 
+      int c;
+      // Display unchanged up to first header
+      std::string line;
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+        std::getline(is, line);
+        std::cout << line << '\n';
+      }
+
       int cz = 0; // cache size
-      // Read into cache
-      int c  = is.peek();
       for(int i = 0; c != EOF; cz = std::min(cz + 1, entries), i = (i + 1) % entries) {
         entry& ce = cache[i];
-        if(cz == entries) { // Print with a delay
+        if(cz == entries) { // Print with a delay (overflow)
           for(int j = 0; j < ce.size; ++j)
             std::cout << ce.lines[j] << '\n';
         }
         ce.size = 0;
-        if(c == '>') {
-          ce.add_line(is);
-          c = is.peek();
-        }
-        for( ; c != '>' && c != EOF; c = is.peek())
+        ce.add_line(is); // Replace entry
+        for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
           ce.add_line(is);
       }
 
@@ -55,6 +61,7 @@ static int head_negative(const head_cmdline& args) {
   return res;
 }
 
+// With a positive value, display the first N entries
 static int head_positive(const head_cmdline& args) {
   int res = EXIT_SUCCESS;
 
@@ -66,14 +73,17 @@ static int head_positive(const head_cmdline& args) {
       is.open(file);
       if((args.file_arg.size() > 1 && !args.quiet_flag) || args.verbose_flag)
         std::cout << "==> " << file << " <==\n";
-      int c = is.peek();
+      int c;
+      // Display unchanged up to first header
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+        std::getline(is, line);
+        std::cout << line << '\n';
+      }
+
       for(int i = 0; c != EOF && i < args.entries_arg; ++i) {
-        if(c == '>') {
-          std::getline(is, line);
-          std::cout << line << '\n';
-          c = is.peek();
-        }
-        for( ; c != '>' && c != EOF; c = is.peek()) {
+        std::getline(is, line);
+        std::cout << line << '\n';
+        for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
           std::getline(is, line);
           std::cout << line << '\n';
         }

@@ -40,12 +40,13 @@ int n50_main(int argc, char *argv[]) {
       is.exceptions(std::ios::failbit|std::ios::badbit);
       is.open(file);
 
-      int c = is.peek();
-      if(c == EOF) continue; // Skip file
-      if(c != '>') throw std::runtime_error("Invalid file format");
+      int c;
+      // Skip up to first header
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
+        skip_line(is);
 
       while(c != EOF) {
-        skip_line(is);
+        skip_line(is); // Ignore header
 
         size_t size = 0;
         for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {

@@ -61,17 +61,19 @@ int rc_main(int argc, char *argv[]) {
       is.exceptions(std::ios::failbit|std::ios::badbit);
       is.open(file);
 
-      int c = is.peek();
+      int c;
+      // Display unchanged up to first header
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+        std::getline(is, header);
+        std::cout << header << '\n';
+      }
 
       while(c != EOF) {
-        if(c == '>') {
-          std::getline(is, header);
-          std::cout << header << '\n';
-          c = is.peek();
-        }
+        std::getline(is, header);
+        std::cout << header << '\n';
 
         size_t nb_lines = 0;
-        for( ; c != '>' && c != EOF; c = is.peek(), ++nb_lines) {
+        for(c = is.peek(); c != '>' && c != EOF; c = is.peek(), ++nb_lines) {
           if(nb_lines >= sequences.size())
             sequences.push_back("");
           std::getline(is, sequences[nb_lines]);

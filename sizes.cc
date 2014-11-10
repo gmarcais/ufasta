@@ -17,8 +17,8 @@ int sizes_main(int argc, char *argv[]) {
 
       int c;
 
-      // Skip whatever is before first '>'
-      while((c = is.peek()) != '>' && c != EOF)
+      // Skip up to first header
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
         skip_line(is);
 
       while(c != EOF) {
@@ -27,7 +27,9 @@ int sizes_main(int argc, char *argv[]) {
         } else {
           std::getline(is, line);
           auto last = line.find_first_of(" \t");
-          std::cout << line.substr(1, last - 1) << ' ';
+          std::cout.write(line.c_str() + 1, last - 1);
+          std::cout << ' ';
+          //          std::cout << line.substr(1, last - 1) << ' ';
         }
 
         size_t size = 0;
