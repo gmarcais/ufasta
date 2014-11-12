@@ -1,0 +1,17 @@
+description "Match a header and output the content."
+
+option("v", "--invert-match") {
+  description "Invert the sense of matching, to select non-matching headers"
+  off }
+option("n", "name") {
+  description "Extract read with NAME, exact match"
+  string; multiple; typestr "NAME" }
+option("f", "name-file") {
+  description "File of read names to extract"
+  c_string; multiple; typestr "path" }
+option("m", "--max-count") {
+  description "Stop reading after NUM matching headers"
+  uint64; typestr "NUM" }
+arg("file") {
+  description "Fasta files"
+  c_string; multiple; at_least 1 }
