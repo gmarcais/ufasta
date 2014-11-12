@@ -14,30 +14,40 @@ int sizes_main(int argc, char *argv[]) {
       std::ifstream is;
       is.exceptions(std::ios::failbit|std::ios::badbit);
       is.open(file);
+      if((args.file_arg.size() > 1 && !args.quiet_flag) || args.verbose_flag)
+        std::cout << "==> " << file << " <==\n";
 
-      int c;
+      int    c;
+      size_t offset = 0;
 
       // Skip up to first header
-      for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
+      for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
         skip_line(is);
+        offset += is.gcount();
+      }
 
       while(c != EOF) {
         if(!args.header_flag) {
           skip_line(is);
+          offset += is.gcount();
         } else {
           std::getline(is, line);
+          offset += line.size() + 1;
           auto last = line.find_first_of(" \t");
           std::cout.write(line.c_str() + 1, last - 1);
           std::cout << ' ';
-          //          std::cout << line.substr(1, last - 1) << ' ';
         }
+        const size_t save_offset = offset;
 
         size_t size = 0;
         for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
           std::getline(is, line);
-          size += line.size();
+          offset += line.size() + 1;
+          size   += line.size();
         }
-        std::cout << size << '\n';
+        std::cout << size;
+        if(args.index_flag) std::cout << ' ' << save_offset;
+        std::cout << '\n';
       }
     } catch(std::ios::failure) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
