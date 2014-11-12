@@ -46,7 +46,7 @@ int sizes_main(int argc, char *argv[]) {
           size   += line.size();
         }
         std::cout << size;
-        if(args.index_flag) std::cout << ' ' << save_offset;
+        if(args.index_flag) std::cout << ' ' << save_offset << ' ' << offset;
         std::cout << '\n';
       }
     } catch(std::ios::failure) {
