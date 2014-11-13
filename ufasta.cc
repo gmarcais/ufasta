@@ -15,6 +15,7 @@ main_func_t tail_main;
 main_func_t rc_main;
 main_func_t n50_main;
 main_func_t extract_main;
+main_func_t format_main;
 
 main_func_t sos;
 main_func_t version;
@@ -32,6 +33,7 @@ cmd_func cmd_list[] = {
   {"rc",                &rc_main},
   {"n50",               &n50_main},
   {"extract",           &extract_main},
+  {"format",            &format_main},
 
   /* help in all its form. Must be first non-command */
   {"help",              &sos},
