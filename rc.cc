@@ -1,8 +1,9 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
+#include <cctype>
 
-#include <one_cmdline.hpp>
+#include <rc_cmdline.hpp>
 
 const char rc[256] = {
  (char)  0, (char)  1, (char)  2, (char)  3, (char)  4, (char)  5, (char)  6, (char)  7,
@@ -50,8 +51,41 @@ void rc_sequence(std::string& seq) {
     seq[i] = rc[(int)seq[i]];
 }
 
+bool is_canonical(const std::vector<std::string>& sequences, size_t nb_lines) {
+  if(nb_lines == 0) return true; // vacuously canonical
+
+  auto vst = sequences.cbegin();
+  auto ven = vst;
+  std::advance(ven, nb_lines - 1);
+
+  auto st = vst->cbegin();
+  auto en = ven->cend();
+
+  while(true) {
+    while(st == vst->cend()) {
+      ++vst; // guaranteed vst < sequences.cend()
+      st = vst->cbegin();
+    }
+    while(en == ven->cbegin()) {
+      --ven; // guaranteed ven >= sequences.cbegin()
+      en = ven->cend();
+    }
+
+    --en;
+    if(vst >= ven || (vst == ven && st >= en)) break;
+    const char c1 = std::tolower(*st);
+    const char c2 = std::tolower(rc[(int)*en]);
+    ++st;
+
+    if(c1 < c2) return true;
+    if(c1 > c2) return false;
+  }
+
+  return true; // palyndromic!
+}
+
 int rc_main(int argc, char *argv[]) {
-  one_cmdline args(argc, argv);
+  const rc_cmdline args(argc, argv);
 
   std::string header;
   std::vector<std::string> sequences;
@@ -79,9 +113,14 @@ int rc_main(int argc, char *argv[]) {
           std::getline(is, sequences[nb_lines]);
         }
 
-        for(size_t i = nb_lines; i > 0; --i) {
-          rc_sequence(sequences[i - 1]);
-          std::cout << sequences[i - 1] << '\n';
+        if(!args.canonical_flag || !is_canonical(sequences, nb_lines)) {
+          for(size_t i = nb_lines; i > 0; --i) {
+            rc_sequence(sequences[i - 1]);
+            std::cout << sequences[i - 1] << '\n';
+          }
+        } else {
+          for(size_t i = 0; i < nb_lines; ++i)
+            std::cout << sequences[i] << '\n';
         }
       }
     } catch(std::ios::failure) {
