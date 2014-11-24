@@ -32,18 +32,18 @@ int sizes_main(int argc, char *argv[]) {
           offset += is.gcount();
         } else {
           std::getline(is, line);
-          offset += line.size() + 1;
-          auto last = line.find_first_of(" \t");
-          std::cout.write(line.c_str() + 1, last - 1);
+          offset    += line.size() + 1;
+          auto last  = line.find_first_of(" \t");
+          std::cout.write(line.c_str() + 1, (last == std::string::npos ? line.size() : last) - 1);
           std::cout << ' ';
         }
         const size_t save_offset = offset;
 
         size_t size = 0;
         for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
-          std::getline(is, line);
-          offset += line.size() + 1;
-          size   += line.size();
+          skip_line(is);
+          offset += is.gcount();
+          size   += is.gcount() - 1;
         }
         std::cout << size;
         if(args.index_flag) std::cout << ' ' << save_offset << ' ' << offset;
