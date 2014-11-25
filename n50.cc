@@ -24,41 +24,69 @@ static std::vector<uint32_t> get_nsizes(const std::vector<uint32_t>& in_sizes, b
   return res;
 }
 
+void update_stats(size_t size, std::vector<size_t>& sizes, size_t& total_size, double& E) {
+  sizes.push_back(size);
+  size_t o_total_size  = total_size;
+  total_size          += size;
+  E = ((double)o_total_size / (double)total_size) * E + (double)(size * size) / total_size;
+}
+
+size_t read_from_fasta(std::istream& is, std::vector<size_t>& sizes, size_t& total_size, double& E) {
+  size_t      contig_i = 0;
+  int         c;
+  std::string line;
+
+  // Skip up to first header
+  for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
+    skip_line(is);
+
+  while(c != EOF) {
+    skip_line(is); // Ignore header
+
+    size_t size = 0;
+    for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
+      std::getline(is, line);
+      size += line.size();
+    }
+    ++contig_i;
+    update_stats(size, sizes, total_size, E);
+  }
+  return contig_i;
+}
+
+size_t read_from_sizes(std::istream& is, std::vector<size_t>& sizes, size_t& total_size, double& E) {
+  size_t size;
+  size_t contig_i = 0;
+  std::string line;
+
+  while(is.peek() != EOF) {
+    std::getline(is, line);
+    size = std::stoul(line);
+    ++contig_i;
+    update_stats(size, sizes, total_size, E);
+  }
+  return contig_i;
+}
+
 int n50_main(int argc, char *argv[]) {
   n50_cmdline args(argc, argv);
 
   const std::vector<uint32_t> nsizes = get_nsizes(args.N_arg, args.Esize_flag || args.sum_flag);
 
   std::vector<size_t> sizes;
-  std::string         line;
   size_t              total_size = 0;
-  double              E = 0.0;
-  size_t              contig_i = 0;
+  double              E          = 0.0;
+  size_t              contig_i   = 0;
   for(auto file : args.file_arg) {
     try {
       std::ifstream is;
       is.exceptions(std::ios::failbit|std::ios::badbit);
       is.open(file);
 
-      int c;
-      // Skip up to first header
-      for(c = is.peek(); c != '>' && c != EOF; c = is.peek())
-        skip_line(is);
-
-      while(c != EOF) {
-        skip_line(is); // Ignore header
-
-        size_t size = 0;
-        for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
-          std::getline(is, line);
-          size += line.size();
-        }
-        ++contig_i;
-        sizes.push_back(size);
-        size_t o_total_size  = total_size;
-        total_size          += size;
-        E = ((double)o_total_size / (double)total_size) * E + (double)(size * size) / total_size;
-      }
+      if(args.from_sizes_flag)
+        contig_i += read_from_sizes(is, sizes, total_size, E);
+      else
+        contig_i += read_from_fasta(is, sizes, total_size, E);
     } catch(std::ios::failure) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;

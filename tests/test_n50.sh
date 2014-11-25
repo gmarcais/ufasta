@@ -21,3 +21,6 @@ EOF
 )
 ALL=$(ufasta n50 -N10 -N25 -N50 -N90 -E -S -A test1.fasta)
 EXPECT_EQ "$EALL" "$ALL" "All statistics"
+
+FS=$(ufasta sizes test1.fasta | ufasta n50 -f -N10 -N25 -N50 -N90 -E -S -A /dev/fd/0)
+EXPECT_EQ "$EALL" "$FS" "All statistics from sizes"
