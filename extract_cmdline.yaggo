@@ -9,6 +9,9 @@ option("n", "name") {
 option("f", "name-file") {
   description "File of read names to extract"
   c_string; multiple; typestr "path" }
+option("p", "probabilistic") {
+  description "Select sequences with probability PROBA"
+  double; typestr "PROBA" }
 option("m", "--max-count") {
   description "Stop reading after NUM matching headers"
   uint64; typestr "NUM" }
