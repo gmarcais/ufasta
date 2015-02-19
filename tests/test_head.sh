@@ -30,3 +30,14 @@ l=$(ufasta head test1.fasta test1.fasta | head -n 1)
 EXPECT_EQ "==> test1.fasta <==" "$l" "Output header many"
 l=$(ufasta head -q test1.fasta test1.fasta | head -n 1)
 EXPECT_EQ ">read0" "$l" "Output header quiet"
+
+
+# Test byte switch
+l=$(ufasta head -c 0 test1.fasta)
+EXPECT_EQ "" "$l" "-c 0"
+for i in $(seq 1 50 $(wc -c < test1.fasta)); do
+    l=$(ufasta head -c $i test1.fasta | grep -c '^>')
+    EXPECT_LT 0 "$l" "-c $i at least one entry"
+    l=$(ufasta head -c $i test1.fasta | wc -c)
+    EXPECT_LE $i $l "-c $i at least $i bytes"
+done

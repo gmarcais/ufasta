@@ -64,6 +64,8 @@ static int head_negative(const head_cmdline& args) {
 // With a positive value, display the first N entries
 static int head_positive(const head_cmdline& args) {
   int res = EXIT_SUCCESS;
+  const auto line_limit = args.bytes_given ? std::numeric_limits<std::streamoff>::max() : (std::streamoff)args.entries_arg;
+  const auto byte_limit = args.bytes_given ? (std::streamoff)args.bytes_arg : std::numeric_limits<std::streamoff>::max();
 
   std::string line;
   for(const auto& file : args.file_arg) {
@@ -79,8 +81,7 @@ static int head_positive(const head_cmdline& args) {
         std::getline(is, line);
         std::cout << line << '\n';
       }
-
-      for(int i = 0; c != EOF && i < args.entries_arg; ++i) {
+      for(std::streamoff i = 0; c != EOF && i < line_limit && is.tellg() < byte_limit; ++i) {
         std::getline(is, line);
         std::cout << line << '\n';
         for(c = is.peek(); c != '>' && c != EOF; c = is.peek()) {
