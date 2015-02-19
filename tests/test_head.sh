@@ -40,4 +40,7 @@ for i in $(seq 1 50 $(wc -c < test1.fasta)); do
     EXPECT_LT 0 "$l" "-c $i at least one entry"
     l=$(ufasta head -c $i test1.fasta | wc -c)
     EXPECT_LE $i $l "-c $i at least $i bytes"
+    
+    l=$(ufasta head -c $i test1.fasta; ufasta tail -c +$i test1.fasta)
+    EXPECT_EQ "$(cat test1.fasta)" "$l" "tail + head -c +$i"
 done

@@ -66,7 +66,7 @@ static int tail_positive(const tail_cmdline& args, int entries) {
   return res;
 }
 
-static int tail_negative(const tail_cmdline& args, const int entries) {
+static int tail_negative(const tail_cmdline& args, const std::streamoff entries, const std::streamoff bytes) {
   int res = EXIT_SUCCESS;
 
   for(const auto& file : args.file_arg) {
@@ -77,7 +77,7 @@ static int tail_negative(const tail_cmdline& args, const int entries) {
       if((args.file_arg.size() > 1 && !args.quiet_flag) || args.verbose_flag)
         std::cout << "==> " << file << " <==\n";
       int c = is.peek();
-      for(int i = 1; c != EOF && i < entries; ++i) {
+      for(std::streamoff i = 1; c != EOF && i < entries && is.tellg() < bytes; ++i) {
         if(c == '>') {
           skip_line(is);
           c = is.peek();
@@ -96,28 +96,41 @@ static int tail_negative(const tail_cmdline& args, const int entries) {
   return res;
 }
 
-static int parse_nb_entries(const std::string& s) {
+static long parse_nb(const std::string& s) {
   if(s.empty()) return 0;
-  if(s[0] == '+') return -std::stoi(s.substr(1));
-  return std::stoi(s);
+  if(s[0] == '+') return -std::stol(s.substr(1));
+  return std::stol(s);
 }
 
 int tail_main(int argc, char *argv[]) {
   const tail_cmdline args(argc, argv);
 
-  int entries;
-  try {
-    entries = parse_nb_entries(args.entries_arg);
-  } catch(std::invalid_argument) {
-    std::cerr << "Invalid number of entries '" << args.entries_arg << '\'' << std::endl;
-    return EXIT_FAILURE;
+  std::streamoff entries = 0;
+  std::streamoff bytes   = 0;
+  if(!args.bytes_given) {
+    bytes = std::numeric_limits<std::streamoff>::max();
+    try { entries = parse_nb(args.entries_arg);
+    } catch(std::invalid_argument) {
+      tail_cmdline::error() << "Invalid number of entries '" << args.entries_arg << '\'';
+    }
+  } else {
+    entries = std::numeric_limits<std::streamoff>::max();
+    try { bytes = parse_nb(args.bytes_arg);
+    } catch(std::invalid_argument) {
+      tail_cmdline::error() << "Invalid number of bytes '" << args.bytes_arg << '\'';
+    }
+    if(bytes > 0)
+      tail_cmdline::error() << "Invalid bytes offset '" << args.bytes_arg << "'. Should be +K";
+    bytes = -bytes;
   }
 
   if(entries == 0) return EXIT_SUCCESS;
-  if(entries > 0)
+  if(args.bytes_given)
+    return tail_negative(args, entries, bytes);
+  else if(entries > 0)
     return tail_positive(args, entries);
   else
-    return tail_negative(args, abs(entries));
+    return tail_negative(args, abs(entries), bytes);
 
   return EXIT_SUCCESS;
 }

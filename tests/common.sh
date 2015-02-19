@@ -17,15 +17,19 @@ EXPECT_NE() {
 }
 
 EXPECT_GT() {
-    test "$1" -gt "$2" && success "$3" || fail "$3. Expected '$1' got '$2'"
+    test "$1" -gt "$2" && success "$3" || fail "$3. Expected '$1' > '$2'"
+}
+
+EXPECT_GE() {
+    test "$1" -ge "$2" && success "$3" || fail "$3. Expected '$1' >= '$2'"
 }
 
 EXPECT_LT() {
-    test "$1" -lt "$2" && success "$3" || fail "$3. Expected '$1' got '$2'"
+    test "$1" -lt "$2" && success "$3" || fail "$3. Expected '$1' < '$2'"
 }
 
 EXPECT_LE() {
-    test "$1" -le "$2" && success "$3" || fail "$3. Expected '$1' got '$2'"
+    test "$1" -le "$2" && success "$3" || fail "$3. Expected '$1' <= '$2'"
 }
 
 

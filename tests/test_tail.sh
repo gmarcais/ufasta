@@ -23,3 +23,15 @@ l=$(ufasta tail -n +49 test1.fasta)
 EXPECT_EQ "$el" "$l" "Output last two entries 1"
 l=$(ufasta tail -n 2 test1.fasta)
 EXPECT_EQ "$el" "$l" "Output last two entries 2"
+
+l=$(ufasta tail -c +0 test1.fasta)
+EXPECT_EQ "$(cat test1.fasta)" "$l" "-c +0"
+
+test1_len=$(wc -c < test1.fasta)
+for i in $(seq 1 53 $(wc -c < test1.fasta)); do
+    l=$(ufasta tail -c +$i test1.fasta | wc -c)
+    EXPECT_GE $((test1_len - i)) $l "-c +$i"
+
+    l=$(ufasta head -c $i test1.fasta; ufasta tail -c +$i test1.fasta)
+    EXPECT_EQ "$(cat test1.fasta)" "$l" "tail + head -c +$i"
+done
