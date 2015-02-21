@@ -7,17 +7,6 @@
 #include <common.hpp>
 #include <tail_cmdline.hpp>
 
-struct entry {
-  int                      size;
-  std::vector<std::string> lines;
-  void add_line(std::istream& is) {
-    if(size >= (int)lines.size())
-      lines.push_back("");
-    std::getline(is, lines[size]);
-    ++size;
-  }
-};
-
 // With a positive number, display the last N lines. Store lines in a
 // circular buffer. Display content of circular buffer when reached
 // the end of the input.

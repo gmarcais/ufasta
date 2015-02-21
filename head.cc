@@ -2,18 +2,8 @@
 #include <string>
 #include <fstream>
 
+#include <common.hpp>
 #include <head_cmdline.hpp>
-
-struct entry {
-  int                      size;
-  std::vector<std::string> lines;
-  void add_line(std::istream& is) {
-    if(size >= (int)lines.size())
-      lines.push_back("");
-    std::getline(is, lines[size]);
-    ++size;
-  }
-};
 
 // With a negative value, display all but the last N entries of a
 // file. Store the entries in a circular buffer of size N. Any
