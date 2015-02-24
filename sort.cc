@@ -126,7 +126,7 @@ struct header_traits<str_type> {
   typedef header_type<str_type> type;
 
   static type name(const char* start, const char* end) {
-    str_type s = { strcspn(std::min(start + args.character_arg, end), " \n\t") };
+    str_type s = { strcspn(std::min(start + args.character_arg, end), args.header_full_flag ? "\n" : " \n\t") };
     return type(s, start, end);
   }
 

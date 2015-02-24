@@ -12,6 +12,9 @@ option("f", "ignore-case") {
 option("C", "character") {
   description "Starting character of sorting key"
   uint32; default 1 }
+option("H", "header-full") {
+  description "Use full line of header as sorting key, not first word"
+  off }
 arg("file") {
   description "Input fasta files"
   c_string; typestr "path"; multiple; at_least 1 }
