@@ -18,6 +18,7 @@ main_func_t extract_main;
 main_func_t format_main;
 main_func_t sort_main;
 main_func_t dsort_main;
+main_func_t dgrep_main;
 
 main_func_t sos;
 main_func_t version;
@@ -38,6 +39,7 @@ cmd_func cmd_list[] = {
   {"format",            &format_main},
   {"sort",              &sort_main},
   {"dsort",             &dsort_main},
+  {"dgrep",             &dgrep_main},
 
   /* help in all its form. Must be first non-command */
   {"help",              &sos},
