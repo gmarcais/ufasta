@@ -108,8 +108,12 @@ template<>
 struct header_traits<int64_t> {
   typedef header_type<int64_t> type;
 
-  static type name(const char* start, const char* end) {
-    return type(std::stoll(std::min(start + args.character_arg, end)), start, end);
+  static type name(const char* start, const char* end, const char* col) {
+    static std::string buff;
+    const char* const  ptr = std::min(col, end);
+    const size_t       s   = strcspn(ptr, " \n\t");
+    buff.assign(ptr, s);
+    return type(std::stoll(buff), start, end);
   }
 
   static void sort(std::vector<type>& headers) {
@@ -119,44 +123,48 @@ struct header_traits<int64_t> {
 
 // Key is a C string (type size_t is its length). Sort alphabetically.
 struct str_type {
-  size_t size;
+  const char* col;
+  size_t      size;
 };
 template<>
 struct header_traits<str_type> {
   typedef header_type<str_type> type;
 
-  static type name(const char* start, const char* end) {
-    str_type s = { strcspn(std::min(start + args.character_arg, end), args.header_full_flag ? "\n" : " \n\t") };
+  static type name(const char* start, const char* end, const char* col) {
+    str_type s = { col, strcspn(std::min(col, end), args.header_full_flag ? "\n" : " \n\t") };
     return type(s, start, end);
   }
 
   static void sort(std::vector<type>& headers) {
     std::sort(headers.begin(), headers.end(),
               [](const type& x, const type& y) -> bool {
-                int res = memcmp(x.start + 1, y.start + 1, std::min(x.value.size, y.value.size));
-                return res != 0 ? res < 0 : x.value.size < y.value.size;
+                const bool xshort = x.value.size < y.value.size;
+                const int  res    = memcmp(x.value.col, y.value.col, xshort ? x.value.size : y.value.size);
+                return res != 0 ? res < 0 : xshort;
               });
   }
 };
 
 // Key is a C string, sort alphabetically case insensitive.
 struct ustr_type {
-  size_t size;
+  const char* col;
+  size_t      size;
 };
 template<>
 struct header_traits<ustr_type> {
   typedef header_type<ustr_type> type;
 
-  static type name(const char* start, const char* end) {
-    ustr_type s = { strcspn(std::min(start + args.character_arg, end), " \n\t") };
+  static type name(const char* start, const char* end, const char* col) {
+    ustr_type s = { col, strcspn(std::min(col, end), " \n\t") };
     return type(s, start, end);
   }
 
   static void sort(std::vector<type>& headers) {
     std::sort(headers.begin(), headers.end(),
               [](const type& x, const type& y) -> bool {
-                int res = strncasecmp(x.start + 1, y.start + 1, std::min(x.value.size, y.value.size));
-                return res != 0 ? res < 0 : x.value.size < y.value.size;
+                const bool xshort = x.value.size < y.value.size;
+                const int res = strncasecmp(x.value.col, y.value.col, xshort ? x.value.size : y.value.size);
+                return res != 0 ? res < 0 : xshort;
               });
   }
 };
@@ -167,7 +175,7 @@ template<>
 struct header_traits<random_type> {
   typedef header_type<random_type> type;
 
-  static type name(const char* start, const char* end) {
+  static type name(const char* start, const char* end, const char* col) {
     return type(random_type(), start, end);
   }
 
@@ -175,6 +183,17 @@ struct header_traits<random_type> {
     std::random_shuffle(headers.begin(), headers.end());
   }
 };
+
+// Return a pointer to the nb-th space separated token in str. str is
+// not modified. Returns NULL if less than nb columns.
+const char* find_token(uint32_t nb, const char* str) {
+  static const char* space = " \t\n";
+  for(uint32_t i = 1; i < nb && *str && *str != '\n'; ++i) {
+    str += strcspn(str, space);
+    str += strspn(str, space);
+  }
+  return (*str && *str != '\n') ? str : nullptr;
+}
 
 template<typename T>
 void parse_headers(const char* const start, const char* const end, std::vector<header_type<T>>& headers) {
@@ -190,13 +209,15 @@ void parse_headers(const char* const start, const char* const end, std::vector<h
   for(const char* next = current + 1; current; current = next) {
     for(next = strchr(next + 1, '>'); next; next = strchr(next + 1, '>'))
       if(*(next - 1) == '\n') break;
-    headers.push_back(header_traits<T>::name(current, next ? next : end - 1));
+    const char* key = find_token(args.key_arg, current + 1);
+    const size_t eol = strcspn(key, "\n");
+    headers.push_back(header_traits<T>::name(current, next ? next : end - 1, key + std::min(eol, (size_t)args.character_arg - 1)));
   }
 }
 
 template <typename T>
 static int sort_mmap(const sort_cmdline& args) {
-  static_assert(std::is_nothrow_move_constructible<close_fd>::value, "Close_fd nothrow move");
+  //  static_assert(std::is_nothrow_move_constructible<close_fd>::value, "Close_fd nothrow move");
   std::vector<close_fd>       fds;
   std::vector<header_type<T>> headers;
 
