@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <signal.h>
 #include <unistd.h>
 
@@ -7,7 +11,6 @@
 
 typedef int (main_func_t)(int argc, char *argv[]);
 
-main_func_t hgrep_main;
 main_func_t one_main;
 main_func_t sizes_main;
 main_func_t head_main;
@@ -18,7 +21,11 @@ main_func_t extract_main;
 main_func_t format_main;
 main_func_t sort_main;
 main_func_t dsort_main;
+
+#ifdef HAVE_BOOST_REGEX
+main_func_t hgrep_main;
 main_func_t dgrep_main;
+#endif
 
 main_func_t sos;
 main_func_t version;
@@ -28,7 +35,6 @@ struct cmd_func {
   main_func_t *func;
 };
 cmd_func cmd_list[] = {
-  {"hgrep",             &hgrep_main},
   {"one",               &one_main},
   {"sizes",             &sizes_main},
   {"head",              &head_main},
@@ -39,7 +45,10 @@ cmd_func cmd_list[] = {
   {"format",            &format_main},
   {"sort",              &sort_main},
   {"dsort",             &dsort_main},
+#ifdef HAVE_BOOST_REGEX
+  {"hgrep",             &hgrep_main},
   {"dgrep",             &dgrep_main},
+#endif
 
   /* help in all its form. Must be first non-command */
   {"help",              &sos},

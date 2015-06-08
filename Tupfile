@@ -1,6 +1,6 @@
 include_rules
 
-CXXFLAGS = -std=c++0x -Wall -Werror -I.
+CXXFLAGS = -std=c++0x -Wall -Werror -I. -DHAVE_BOOST_REGEX
 LDFLAGS = -lboost_regex
 CMDLINES = hgrep_cmdline.yaggo one_cmdline.yaggo sizes_cmdline.yaggo head_cmdline.yaggo tail_cmdline.yaggo rc_cmdline.yaggo
 CMDLINES += n50_cmdline.yaggo extract_cmdline.yaggo format_cmdline.yaggo sort_cmdline.yaggo dsort_cmdline.yaggo dgrep_cmdline.yaggo

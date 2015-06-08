@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CPPFLAGS = -Wall -I$(top_srcdir)
 AM_CXXFLAGS = $(ALL_CXXFLAGS) -g -O3
-AM_LDFLAGS = -lboost_regex
+AM_LDFLAGS =
 
 bin_PROGRAMS = ufasta
 noinst_HEADERS = $(YAGGO_SRCS) common.hpp
@@ -23,10 +23,14 @@ YAGGO_SRCS = # Append all file to be built by yaggo
 ##################
 # Build binaries #
 ##################
-ufasta_SOURCES = ufasta.cc hgrep.cc one.cc sizes.cc head.cc tail.cc	\
-                 rc.cc n50.cc extract.cc format.cc sort.cc dsort.cc	\
-                 dgrep.cc
+ufasta_SOURCES = ufasta.cc one.cc sizes.cc head.cc tail.cc	\
+                 rc.cc n50.cc extract.cc format.cc sort.cc dsort.cc
 YAGGO_SRCS += hgrep_cmdline.hpp one_cmdline.hpp sizes_cmdline.hpp	\
               head_cmdline.hpp tail_cmdline.hpp rc_cmdline.hpp		\
               n50_cmdline.hpp extract_cmdline.hpp format_cmdline.hpp	\
               sort_cmdline.hpp dsort_cmdline.hpp dgrep_cmdline.hpp
+
+if BOOST_REGEX
+AM_LDFLAGS += -lboost_regex
+ufasta_SOURCES += hgrep.cc dgrep.cc
+endif
