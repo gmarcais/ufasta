@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -Wall -I$(top_srcdir)
+AM_CPPFLAGS = -Wall -I$(srcdir)
 AM_CXXFLAGS = $(ALL_CXXFLAGS) -g -O3
 AM_LDFLAGS =
 
