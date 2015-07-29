@@ -46,6 +46,20 @@ int extract_main(int argc, char *argv[]) {
   std::uniform_real_distribution<double> dist; // uniform in [0.0, 1.0)
   const double                           proba = check_proba(args);
 
+  std::cerr << no_entries << ' ' << (!proba) << ' '
+            << args.invert_match_flag << std::endl;
+
+  if(no_entries && !proba) { // Nothing specific to extract
+    if(!args.invert_match_flag) // Nothing to extract at all
+      return EXIT_SUCCESS;
+
+    // Extract everything -> devolve to /bin/cat
+    args.file_arg.insert(args.file_arg.begin(), "cat");
+    args.file_arg.push_back(nullptr);
+    execvp("cat", (char**)args.file_arg.data());
+    return EXIT_FAILURE;
+  }
+
   std::string line;
   for(auto file : args.file_arg) {
     try {
