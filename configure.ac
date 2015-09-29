@@ -14,12 +14,15 @@ AC_PROG_CXX
 
 # AC_CHECK_LIB(boost_regex, toto)
 AC_MSG_CHECKING([for libboost_regex])
+SAVE_LDFLAGS=$LDFLAGS
+LDFLAGS="$LDFLAGS -lboost_regex"
 AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <boost/regex.hpp>],
                                 [boost::regex regexp])],
                                 [AC_MSG_RESULT([yes])] [AC_DEFINE([HAVE_BOOST_REGEX], 1, [Have libboost_regex])]
                                                        [have_boost=true],
                                 [AC_MSG_RESULT([no])]
                                 [have_boost=false])
+LDFLAGS=$SAVE_LDFLAGS
 AM_CONDITIONAL([BOOST_REGEX], [test x$have_boost = xtrue])
 
 # Check for yaggo
