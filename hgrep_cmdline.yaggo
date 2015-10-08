@@ -11,4 +11,4 @@ arg("regexp") {
   c_string }
 arg("file") {
   description "Fasta files"
-  c_string; multiple; at_least 1 }
+  c_string; multiple }

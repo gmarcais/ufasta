@@ -43,6 +43,7 @@ cmd_func cmd_list[] = {
   {"n50",               &n50_main},
   {"extract",           &extract_main},
   {"format",            &format_main},
+  {"hsort",             &sort_main},
   {"sort",              &sort_main},
   {"dsort",             &dsort_main},
 #ifdef HAVE_BOOST_REGEX

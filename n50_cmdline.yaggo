@@ -29,4 +29,4 @@ option("f", "from-sizes") {
   off }
 arg("file") {
   description "Input fasta file"
-  c_string; multiple; at_least 1 }
+  c_string; multiple }

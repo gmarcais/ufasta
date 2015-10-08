@@ -85,7 +85,13 @@ bool is_canonical(const std::vector<std::string>& sequences, size_t nb_lines) {
 }
 
 int rc_main(int argc, char *argv[]) {
-  const rc_cmdline args(argc, argv);
+  rc_cmdline args(argc, argv);
+  if(args.file_arg.empty()) {
+    args.file_arg.push_back("/dev/stdin");
+    if(isatty(0))
+      std::cerr << "Warning: reading from terminal" << std::endl;
+  }
+
 
   std::string header;
   std::vector<std::string> sequences;

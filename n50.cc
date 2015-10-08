@@ -70,6 +70,12 @@ size_t read_from_sizes(std::istream& is, std::vector<size_t>& sizes, size_t& tot
 
 int n50_main(int argc, char *argv[]) {
   n50_cmdline args(argc, argv);
+  if(args.file_arg.empty()) {
+    args.file_arg.push_back("/dev/stdin");
+    if(isatty(0))
+      std::cerr << "Warning: reading from terminal" << std::endl;
+  }
+
 
   const std::vector<uint32_t> nsizes = get_nsizes(args.N_arg, args.Esize_flag || args.sum_flag);
 

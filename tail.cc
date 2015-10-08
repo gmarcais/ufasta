@@ -92,7 +92,12 @@ static long parse_nb(const std::string& s) {
 }
 
 int tail_main(int argc, char *argv[]) {
-  const tail_cmdline args(argc, argv);
+  tail_cmdline args(argc, argv);
+  if(args.file_arg.empty()) {
+    args.file_arg.push_back("/dev/stdin");
+    if(isatty(0))
+      std::cerr << "Warning: reading from terminal" << std::endl;
+  }
 
   std::streamoff entries = 0;
   std::streamoff bytes   = 0;
@@ -119,7 +124,7 @@ int tail_main(int argc, char *argv[]) {
   else if(entries > 0)
     return tail_positive(args, entries);
   else
-    return tail_negative(args, abs(entries), bytes);
+    return tail_negative(args, std::abs(entries), bytes);
 
   return EXIT_SUCCESS;
 }

@@ -10,7 +10,7 @@
 // overflow get printed out.
 static int head_negative(const head_cmdline& args) {
   int                res     = EXIT_SUCCESS;
-  const int          entries = abs(args.entries_arg);
+  const int          entries = std::abs(args.entries_arg);
   std::vector<entry> cache(entries);
 
   for(const auto& file : args.file_arg) {
@@ -89,7 +89,12 @@ static int head_positive(const head_cmdline& args) {
 }
 
 int head_main(int argc, char *argv[]) {
-  const head_cmdline args(argc, argv);
+  head_cmdline args(argc, argv);
+  if(args.file_arg.empty()) {
+    args.file_arg.push_back("/dev/stdin");
+    if(isatty(0))
+      std::cerr << "Warning: reading from terminal" << std::endl;
+  }
 
   if(args.entries_arg == 0) return EXIT_SUCCESS;
   if(args.entries_arg > 0)
