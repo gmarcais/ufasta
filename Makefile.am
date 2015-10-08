@@ -30,7 +30,7 @@ YAGGO_SRCS += hgrep_cmdline.hpp one_cmdline.hpp sizes_cmdline.hpp	\
               n50_cmdline.hpp extract_cmdline.hpp format_cmdline.hpp	\
               sort_cmdline.hpp dsort_cmdline.hpp dgrep_cmdline.hpp
 
-if BOOST_REGEX
+if HAVE_BOOST_REGEX
 AM_LDFLAGS += -lboost_regex
 ufasta_SOURCES += hgrep.cc dgrep.cc
 endif
