@@ -23,12 +23,14 @@ YAGGO_SRCS = # Append all file to be built by yaggo
 ##################
 # Build binaries #
 ##################
-ufasta_SOURCES = ufasta.cc one.cc sizes.cc head.cc tail.cc	\
-                 rc.cc n50.cc extract.cc format.cc sort.cc dsort.cc
+ufasta_SOURCES = ufasta.cc one.cc sizes.cc head.cc tail.cc rc.cc	\
+                 n50.cc extract.cc format.cc sort.cc dsort.cc		\
+                 split.cc
 YAGGO_SRCS += hgrep_cmdline.hpp one_cmdline.hpp sizes_cmdline.hpp	\
               head_cmdline.hpp tail_cmdline.hpp rc_cmdline.hpp		\
               n50_cmdline.hpp extract_cmdline.hpp format_cmdline.hpp	\
-              sort_cmdline.hpp dsort_cmdline.hpp dgrep_cmdline.hpp
+              sort_cmdline.hpp dsort_cmdline.hpp dgrep_cmdline.hpp	\
+              split_cmdline.hpp
 
 if HAVE_BOOST_REGEX
 AM_LDFLAGS += -lboost_regex

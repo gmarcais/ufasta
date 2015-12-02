@@ -21,6 +21,7 @@ main_func_t extract_main;
 main_func_t format_main;
 main_func_t sort_main;
 main_func_t dsort_main;
+main_func_t split_main;
 
 #ifdef HAVE_BOOST_REGEX
 main_func_t hgrep_main;
@@ -50,6 +51,7 @@ cmd_func cmd_list[] = {
   {"hgrep",             &hgrep_main},
   {"dgrep",             &dgrep_main},
 #endif
+  {"split",             &split_main},
 
   /* help in all its form. Must be first non-command */
   {"help",              &sos},
