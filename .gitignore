@@ -1,4 +1,3 @@
-*.in
 config.*
 aclocal.m4
 configure
@@ -11,3 +10,6 @@ autom4te.cache
 ##### Do not edit.
 .tup
 /.gitignore
+test-driver
+compile
+ltmain.sh

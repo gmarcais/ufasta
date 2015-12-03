@@ -1,3 +1,8 @@
+#! /usr/bin/env bash
+
+SRCDIR=@SRCDIR@
+BUILDDIR=@BUILDDIR@
+
 success() {
     echo "[ OK ] $1"
     true
@@ -37,7 +42,15 @@ EXPECT_SUCCESS() {
     test "$?" = "0" && success "$1" || fail "$1"
 }
 
-PATH=..:$PATH
-
 set +o | grep pipefail > /dev/null && set -o pipefail
 set -o errexit
+
+TEST1=$SRCDIR/tests/test1.fasta
+PATH=$BUILDIR:$PATH
+LANG=C # For sorting
+
+echo -n "pwd: "; pwd
+echo -n "ufasta: "; which ufasta
+echo    "script: $1"
+
+source "$1"

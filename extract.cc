@@ -57,8 +57,8 @@ int extract_main(int argc, char *argv[]) {
   if(range_start >= range_end)
     extract_cmdline::error() << "Range [" << range_start << ", " << range_end << ") specification error. Start of range must be less than end of range";
 
-  std::cerr << no_entries << ' ' << (!proba) << ' '
-            << args.invert_match_flag << ' ' << range_limit << std::endl;
+  // std::cerr << no_entries << ' ' << (!proba) << ' '
+  //           << args.invert_match_flag << ' ' << range_limit << std::endl;
 
   if(no_entries && !proba) { // Nothing specific to extract
     if(!args.invert_match_flag) // Nothing to extract at all

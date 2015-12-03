@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <map>
+#include <vector>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -30,7 +30,7 @@ struct output_pipe {
     rhs.fd = -1;
   }
   ~output_pipe() {
-    close(fd);
+    close();
   }
 
   output_pipe& operator=(output_pipe&& rhs) {
@@ -39,6 +39,11 @@ struct output_pipe {
     pos    = rhs.pos;
     buffer = std::move(rhs.buffer);
     return *this;
+  }
+
+  void close() {
+    ::close(fd);
+    fd = -1;
   }
 
   bool append_sequence(std::istream& is) {
@@ -77,35 +82,36 @@ struct output_pipe {
 int split_main(int argc, char* argv[]) {
   split_cmdline args(argc, argv);
 
-  std::map<int, output_pipe> pipes;
+  std::vector<output_pipe> pipes;
   if(args.output_arg.empty())
     args.output_arg.push_back("/dev/stdout");
   for(auto& path : args.output_arg) {
     output_pipe pipe(path);
     if(pipe.fd == -1)
       split_cmdline::error() << "Failed to open file '" << path << "':" << strerror(errno);
-    pipes[pipe.fd] = std::move(pipe);
+    pipes.push_back(std::move(pipe));
   }
 
-  if(args.input_arg.empty()) {
-    args.input_arg.push_back("/dev/stdin");
-    if(isatty(0))
+  if(!strcmp(args.input_arg, "/dev/stdin") && isatty(0))
       std::cerr << "Warning: reading from terminal" << std::endl;
-  }
-  const char* input_path = args.input_arg.front();
+
+  const char* input_path = args.input_arg;
   std::ifstream input(input_path);
   if(!input.good())
     split_cmdline::error() << "Failed to open input file '" << input_path << "'";
   std::string buffer;
 
-  while(!pipes.empty()) {
+  while(true) {
     fd_set output_set;
     FD_ZERO(&output_set);
     int fd_max = -1;
     for(auto& pipe : pipes) {
-      FD_SET(pipe.first, &output_set);
-      fd_max = std::max(fd_max, pipe.first);
+      if(pipe.fd != -1)
+        FD_SET(pipe.fd, &output_set);
+      fd_max = std::max(fd_max, pipe.fd);
     }
+    if(fd_max == -1)
+      break;
     ++fd_max;
 
     while(true) {
@@ -117,8 +123,8 @@ int split_main(int argc, char* argv[]) {
     }
 
     for(auto& pipe : pipes) {
-      if(FD_ISSET(pipe.first, &output_set) && !pipe.second.append_sequence(input))
-        pipes.erase(pipe.first);
+      if(FD_ISSET(pipe.fd, &output_set) && !pipe.append_sequence(input))
+        pipe.close();
     }
   }
 
