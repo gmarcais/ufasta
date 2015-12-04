@@ -13,3 +13,4 @@ autom4te.cache
 test-driver
 compile
 ltmain.sh
+Makefile.in
