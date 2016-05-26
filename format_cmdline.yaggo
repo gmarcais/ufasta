@@ -13,6 +13,9 @@ option("U", "upper-case") {
 option("s", "spaces") {
   description "Remove white spaces"
   off }
+option("H", "header") {
+  description "Shorten header to first word after >"
+  off }
 arg("file") {
   description "Input fasta file"
   c_string; multiple }

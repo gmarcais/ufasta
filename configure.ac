@@ -8,9 +8,9 @@ AC_CONFIG_HEADERS([config.h])
 
 # Change default compilation flags
 AC_SUBST([ALL_CXXFLAGS], [-std=c++0x])
-CXXFLAGS="-std=c++0x $CXXFLAGS"
 AC_LANG(C++)
 AC_PROG_CXX
+CXXFLAGS="-std=c++0x $CXXFLAGS"
 
 # AC_CHECK_LIB(boost_regex, toto)
 AC_ARG_VAR([BOOST_ROOT], [Root of boost installation])
