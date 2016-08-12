@@ -85,10 +85,16 @@ static int tail_negative(const tail_cmdline& args, const std::streamoff entries,
   return res;
 }
 
-static long parse_nb(const std::string& s) {
+template<typename T>
+static long parse_nb(const T& s) {
   if(s.empty()) return 0;
-  if(s[0] == '+') return -std::stol(s.substr(1));
-  return std::stol(s);
+  long res = 0;
+  try {
+    res= s.as_long(true);
+  } catch(std::runtime_error e) {
+    tail_cmdline::error() << e.what();
+  }
+  return (s[0] == '+') ? -res : res;
 }
 
 int tail_main(int argc, char *argv[]) {
@@ -98,7 +104,6 @@ int tail_main(int argc, char *argv[]) {
     if(isatty(0))
       std::cerr << "Warning: reading from terminal" << std::endl;
   }
-
   std::streamoff entries = 0;
   std::streamoff bytes   = 0;
   if(!args.bytes_given) {

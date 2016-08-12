@@ -2,10 +2,10 @@ description "Output the head of fasta files"
 
 option("n", "entries") {
   description "Print the first K entries. With a leading -, print all but the last K entries."
-  int64; typestr "[-]K"; default 10 }
+  int64; typestr "[-]K"; default 10; suffix }
 option("c", "bytes") {
   description "Print up to the entry containing byte K in file"
-  uint64; typestr "K" }
+  uint64; typestr "K"; conflict "entries"; suffix }
 option("q", "quiet") {
   description "Never print headers giving file names"
   off }
