@@ -42,6 +42,7 @@ cmd_func cmd_list[] = {
   {"tail",              &tail_main},
   {"rc",                &rc_main},
   {"n50",               &n50_main},
+  {"stats",             &n50_main},
   {"extract",           &extract_main},
   {"format",            &format_main},
   {"hsort",             &sort_main},

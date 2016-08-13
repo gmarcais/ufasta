@@ -1,4 +1,4 @@
-purpose "Compute N50 and other statistics"
+purpose "Compute statistics on fasta"
 
 description <<EOS
 If no -N or -E switch is passed, it computes the N50. Otherwise
@@ -19,10 +19,13 @@ option("E", "Esize") {
   description "Compute the E-size"
   off }
 option("S", "sum") {
-  description "COmpute sum of size of all entries"
+  description "Compute sum of size of all entries"
   off }
 option("A", "average") {
   description "Compute average length of all entries"
+  off }
+option("C", "count") {
+  description "Compute the number of sequences"
   off }
 option("f", "from-sizes") {
   description "Read list of contig sizes instead of fasta"

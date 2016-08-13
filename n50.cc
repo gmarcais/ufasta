@@ -142,6 +142,11 @@ int n50_main(int argc, char *argv[]) {
       std::cout << "E ";
     std::cout << E << '\n';
   }
+  if(args.count_flag) {
+    if(!args.no_header_flag)
+      std::cout << "C ";
+    std::cout << contig_i << '\n';
+  }
 
   return EXIT_SUCCESS;
 }
