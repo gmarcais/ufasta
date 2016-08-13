@@ -78,7 +78,7 @@ int n50_main(int argc, char *argv[]) {
   }
 
 
-  const std::vector<uint32_t> nsizes = get_nsizes(args.N_arg, args.Esize_flag || args.sum_flag);
+  const std::vector<uint32_t> nsizes = get_nsizes(args.N_arg, !args.all_flag && (args.Esize_flag || args.sum_flag));
 
   std::vector<size_t> sizes;
   size_t              total_size = 0;
@@ -127,22 +127,22 @@ int n50_main(int argc, char *argv[]) {
       std::cout << 'N' << nsizes[nsize] << ' ';
     std::cout << "-\n";
   }
-  if(args.sum_flag) {
+  if(args.sum_flag || args.all_flag) {
     if(!args.no_header_flag)
       std::cout << "S ";
     std::cout << sum_size << '\n';
   }
-  if(args.average_flag) {
+  if(args.average_flag || args.all_flag) {
     if(!args.no_header_flag)
       std::cout << "A ";
     std::cout << ((double)sum_size / sizes.size()) << "\n";
   }
-  if(args.Esize_flag) {
+  if(args.Esize_flag || args.all_flag) {
     if(!args.no_header_flag)
       std::cout << "E ";
     std::cout << E << '\n';
   }
-  if(args.count_flag) {
+  if(args.count_flag || args.all_flag) {
     if(!args.no_header_flag)
       std::cout << "C ";
     std::cout << contig_i << '\n';
