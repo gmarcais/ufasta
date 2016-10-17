@@ -12,6 +12,9 @@ AC_LANG(C++)
 AC_PROG_CXX
 CXXFLAGS="-std=c++0x $CXXFLAGS"
 
+# Check for mremap
+AC_CHECK_FUNCS([mremap])
+
 # AC_CHECK_LIB(boost_regex, toto)
 AC_ARG_VAR([BOOST_ROOT], [Root of boost installation])
 AS_IF([test x$BOOST_ROOT != x],
