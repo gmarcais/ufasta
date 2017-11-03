@@ -25,14 +25,14 @@ YAGGO_SRCS = # Append all file to be built by yaggo
 # Build binaries #
 ##################
 SUB_CMDS = one.cc sizes.cc head.cc tail.cc rc.cc n50.cc extract.cc	\
-           format.cc sort.cc dsort.cc split.cc
+           format.cc sort.cc dsort.cc split.cc rsort.cc
 
 if HAVE_BOOST_REGEX
 AM_LDFLAGS += -lboost_regex
 SUB_CMDS += hgrep.cc dgrep.cc
 endif
 
-ufasta_SOURCES = ufasta.cc $(SUB_CMDS)
+ufasta_SOURCES = ufasta.cc common.cc $(SUB_CMDS)
 YAGGO_SRCS += $(SUB_CMDS:.cc=_cmdline.hpp)
 
 #########
@@ -52,7 +52,7 @@ TESTS = tests/test_head.sh tests/test_tail.sh tests/test_rc.sh		\
         tests/test_one.sh tests/test_hgrep.sh tests/test_n50.sh		\
         tests/test_sizes.sh tests/test_extract.sh			\
         tests/test_format.sh tests/test_sort.sh tests/test_dsort.sh	\
-        tests/test_dgrep.sh tests/test_split.sh
+        tests/test_dgrep.sh tests/test_split.sh tests/test_rsort.sh
 EXTRA_DIST += $(TESTS) tests/test1.fasta
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = ./tests/testsh

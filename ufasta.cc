@@ -21,6 +21,7 @@ main_func_t extract_main;
 main_func_t format_main;
 main_func_t sort_main;
 main_func_t dsort_main;
+main_func_t rsort_main;
 main_func_t split_main;
 
 #ifdef HAVE_BOOST_REGEX
@@ -48,6 +49,7 @@ cmd_func cmd_list[] = {
   {"hsort",             &sort_main},
   {"sort",              &sort_main},
   {"dsort",             &dsort_main},
+  {"rsort",             &rsort_main},
 #ifdef HAVE_BOOST_REGEX
   {"hgrep",             &hgrep_main},
   {"dgrep",             &dgrep_main},

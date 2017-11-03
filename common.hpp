@@ -1,6 +1,8 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <string.h>
+
 #include <istream>
 #include <limits>
 #include <vector>
@@ -19,5 +21,9 @@ struct entry {
     ++size;
   }
 };
+
+// Return a pointer to the nb-th space separated token in str. str is
+// not modified. Returns NULL if less than nb columns.
+const char* find_token(uint32_t nb, const char* str);
 
 #endif /* __COMMON_H__ */

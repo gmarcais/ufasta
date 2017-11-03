@@ -13,6 +13,8 @@
 
 #include <sort_cmdline.hpp>
 
+#include "common.hpp"
+
 static sort_cmdline args;
 
 struct close_fd {
@@ -211,17 +213,6 @@ struct header_traits<random_type> {
     std::random_shuffle(headers.begin(), headers.end());
   }
 };
-
-// Return a pointer to the nb-th space separated token in str. str is
-// not modified. Returns NULL if less than nb columns.
-const char* find_token(uint32_t nb, const char* str) {
-  static const char* space = " \t\n";
-  for(uint32_t i = 1; i < nb && *str && *str != '\n'; ++i) {
-    str += strcspn(str, space);
-    str += strspn(str, space);
-  }
-  return (*str && *str != '\n') ? str : nullptr;
-}
 
 template<typename T>
 void parse_headers(const char* const start, const char* const end, std::vector<header_type<T>>& headers) {
