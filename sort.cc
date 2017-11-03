@@ -170,7 +170,7 @@ struct header_traits<str_type> {
     std::sort(headers.begin(), headers.end(),
               [](const type& x, const type& y) -> bool {
                 const bool xshort = x.value.size < y.value.size;
-                const int  res    = memcmp(x.value.col, y.value.col, xshort ? x.value.size : y.value.size);
+                const int  res    = strncmp(x.value.col, y.value.col, xshort ? x.value.size : y.value.size);
                 return res != 0 ? res < 0 : xshort;
               });
   }

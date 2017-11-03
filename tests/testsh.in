@@ -2,6 +2,7 @@
 
 SRCDIR=@SRCDIR@
 BUILDDIR=@BUILDDIR@
+BOOST_REGEX=@HAVE_BOOST_REGEX@
 
 success() {
     echo "[ OK ] $1"

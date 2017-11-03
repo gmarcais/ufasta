@@ -24,9 +24,12 @@ SAVE_LDFLAGS=$LDFLAGS
 LDFLAGS="$LDFLAGS -lboost_regex"
 AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <boost/regex.hpp>],
                                 [boost::regex exp(".*"); boost::regex_match("foo", exp);])],
-                                [AC_MSG_RESULT([yes])] [AC_DEFINE([HAVE_BOOST_REGEX], 1, [Have libboost_regex])]
-                                                       [have_boost=true],
+                                [AC_MSG_RESULT([yes])]
+                                [AC_DEFINE([HAVE_BOOST_REGEX], 1, [Have libboost_regex])]
+                                [AC_SUBST([BOOST_REGEX], [true])]
+                                [have_boost=true],
                                 [AC_MSG_RESULT([no])]
+                                [AC_SUBST([BOOST_REGEX], [])]
                                 [have_boost=false])
 LDFLAGS=$SAVE_LDFLAGS
 AM_CONDITIONAL([HAVE_BOOST_REGEX], [test x$have_boost = xtrue])
