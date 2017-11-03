@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <string>
 #include <algorithm>
+#include <random>
 
 #include <sort_cmdline.hpp>
 
@@ -210,7 +211,11 @@ struct header_traits<random_type> {
   }
 
   static void sort(std::vector<type>& headers) {
-    std::random_shuffle(headers.begin(), headers.end());
+    typedef std::vector<type>::difference_type v_t;
+
+    auto rng = seeded_prg<std::mt19937_64>();
+    std::random_shuffle(headers.begin(), headers.end(),
+                        [&rng](v_t x) { return std::uniform_int_distribution<v_t>(0, x-1)(rng); });
   }
 };
 
