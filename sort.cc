@@ -99,7 +99,7 @@ void slurp_in(close_fd& fd) {
       offset += res;
       left   -= res;
     }
-    size_t new_size = fd.size * 2;
+    size_t new_size = fd.size * 1.5;
     char* new_ptr = mrealloc(fd.ptr, fd.size, new_size);
     if(new_ptr == MAP_FAILED) goto error;
     fd.size = new_size;
