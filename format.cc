@@ -70,7 +70,7 @@ int format_main(int argc, char *argv[]) {
         if(!empty)
           std::cout << '\n';
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;
     }

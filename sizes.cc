@@ -54,7 +54,7 @@ int sizes_main(int argc, char *argv[]) {
         if(args.index_flag) std::cout << ' ' << save_offset << ' ' << offset;
         std::cout << '\n';
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;
     }

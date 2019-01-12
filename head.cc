@@ -42,7 +42,7 @@ static int head_negative(const head_cmdline& args) {
           ce.add_line(is);
       }
 
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       res = EXIT_FAILURE;
     }
@@ -79,7 +79,7 @@ static int head_positive(const head_cmdline& args) {
           std::cout << line << '\n';
         }
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       res = EXIT_FAILURE;
     }

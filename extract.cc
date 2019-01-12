@@ -120,7 +120,7 @@ int extract_main(int argc, char *argv[]) {
 
         if(--max_count == 0) break;
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;
     }

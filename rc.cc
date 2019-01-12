@@ -129,7 +129,7 @@ int rc_main(int argc, char *argv[]) {
             std::cout << sequences[i] << '\n';
         }
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;
     }

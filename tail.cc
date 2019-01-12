@@ -46,7 +46,7 @@ static int tail_positive(const tail_cmdline& args, int entries) {
         for(int j = 0; j < ce.size; ++j)
           std::cout << ce.lines[j] << '\n';
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       res = EXIT_FAILURE;
     }
@@ -76,7 +76,7 @@ static int tail_negative(const tail_cmdline& args, const std::streamoff entries,
       }
       if(c != EOF)
         std::cout << is.rdbuf();
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       res = EXIT_FAILURE;
     }
@@ -91,7 +91,7 @@ static long parse_nb(const T& s) {
   long res = 0;
   try {
     res= s.as_long(true);
-  } catch(std::runtime_error e) {
+  } catch(std::runtime_error& e) {
     tail_cmdline::error() << e.what();
   }
   return (s[0] == '+') ? -res : res;
@@ -109,13 +109,13 @@ int tail_main(int argc, char *argv[]) {
   if(!args.bytes_given) {
     bytes = std::numeric_limits<std::streamoff>::max();
     try { entries = parse_nb(args.entries_arg);
-    } catch(std::invalid_argument) {
+    } catch(std::invalid_argument&) {
       tail_cmdline::error() << "Invalid number of entries '" << args.entries_arg << '\'';
     }
   } else {
     entries = std::numeric_limits<std::streamoff>::max();
     try { bytes = parse_nb(args.bytes_arg);
-    } catch(std::invalid_argument) {
+    } catch(std::invalid_argument&) {
       tail_cmdline::error() << "Invalid number of bytes '" << args.bytes_arg << '\'';
     }
     if(bytes > 0)

@@ -19,7 +19,7 @@ int dgrep_main(int argc, char *argv[]) {
 
   try {
     regexp = args.regexp_arg;
-  } catch(boost::bad_expression error) {
+  } catch(boost::bad_expression& error) {
     std::cerr << "Invalid regular expression: " << error.what() << "\n"
               << "  " << args.regexp_arg << "\n"
               << std::string(1 + error.position(), ' ') << "^" << std::endl;
@@ -66,7 +66,7 @@ int dgrep_main(int argc, char *argv[]) {
           }
         }
       }
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;
     }

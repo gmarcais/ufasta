@@ -94,10 +94,10 @@ int n50_main(int argc, char *argv[]) {
         contig_i += read_from_sizes(is, sizes, total_size, E);
       else
         contig_i += read_from_fasta(is, sizes, total_size, E);
-    } catch(std::ios::failure) {
+    } catch(std::ios::failure&) {
       std::cerr << "Error with file '" << file << '\'' << std::endl;
       return EXIT_FAILURE;
-    } catch(std::runtime_error e) {
+    } catch(std::runtime_error& e) {
       std::cerr << "Error with file '" << file << "': " << e.what() << std::endl;
     }
   }
