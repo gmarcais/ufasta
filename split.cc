@@ -42,7 +42,8 @@ struct output_pipe {
   }
 
   void close() {
-    ::close(fd);
+    if(fd >= 0)
+      ::close(fd);
     fd = -1;
   }
 
