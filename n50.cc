@@ -129,22 +129,22 @@ int n50_main(int argc, char *argv[]) {
   }
   if(args.sum_flag || args.all_flag) {
     if(!args.no_header_flag)
-      std::cout << "Sequence ";
+      std::cout << (args.terse_flag ? "S" :"Sequence") << ' ';
     std::cout << sum_size << '\n';
   }
   if(args.average_flag || args.all_flag) {
     if(!args.no_header_flag)
-      std::cout << "Average ";
+      std::cout << (args.terse_flag ? "A" : "Average") << ' ';
     std::cout << ((double)sum_size / sizes.size()) << "\n";
   }
   if(args.Esize_flag || args.all_flag) {
     if(!args.no_header_flag)
-      std::cout << "E-size ";
+      std::cout << (args.terse_flag ? "E" : "E-size") << ' ';
     std::cout << E << '\n';
   }
   if(args.count_flag || args.all_flag) {
     if(!args.no_header_flag)
-      std::cout << "Count ";
+      std::cout << (args.terse_flag ? "C" : "Count") << ' ';
     std::cout << contig_i << '\n';
   }
 

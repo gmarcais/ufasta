@@ -33,6 +33,9 @@ option("C", "count") {
 option("f", "from-sizes") {
   description "Read list of contig sizes instead of fasta"
   off }
+option("t", "terse") {
+  description "Old terse headers"
+  off }
 arg("file") {
   description "Input fasta file"
   c_string; multiple }
