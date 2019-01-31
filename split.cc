@@ -13,18 +13,21 @@
 
 
 struct output_pipe {
-  int         fd;
-  size_t      pos;
-  std::string buffer;
+  int               fd;
+  size_t            pos, ipos; // pos to write from buffer and ipos to read in buffer
+  std::vector<char> buffer;
 
   output_pipe() : fd(-1), pos(0) { }
   output_pipe(const char* path)
     : fd(open(path, O_WRONLY|O_CREAT|O_NONBLOCK|O_APPEND, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))
     , pos(0)
+    , ipos(0)
+    , buffer(1024, '\0')
   { }
   output_pipe(output_pipe&& rhs)
     : fd(rhs.fd)
     , pos(rhs.pos)
+    , ipos(rhs.ipos)
     , buffer(std::move(rhs.buffer))
   {
     rhs.fd = -1;
@@ -37,6 +40,7 @@ struct output_pipe {
     fd     = rhs.fd;
     rhs.fd = -1;
     pos    = rhs.pos;
+    ipos   = rhs.ipos;
     buffer = std::move(rhs.buffer);
     return *this;
   }
@@ -48,9 +52,9 @@ struct output_pipe {
   }
 
   bool append_sequence(std::istream& is) {
-    if(pos < buffer.size()) { // Try to write if have stuff remaining in buffer
+    if(pos < ipos) { // Try to write if have stuff remaining in buffer
       while(true) {
-        ssize_t res = write(fd, buffer.data() + pos, buffer.size() - pos);
+        ssize_t res = write(fd, buffer.data() + pos, ipos - pos);
         if(res == -1) {
           if(errno == EAGAIN || errno == EWOULDBLOCK) return true;
           if(errno == EINTR) continue;
@@ -60,23 +64,15 @@ struct output_pipe {
         pos += res;
         break;
       }
-      if(pos < buffer.size()) return true;
+      if(pos < ipos) return true;
     }
 
     // Need to refill buffer
-    std::string tmp;
-    buffer.clear();
     pos = 0;
-    std::getline(is, buffer);
-    while(is.peek() != EOF && is.peek() != '>') {
-      std::getline(is, tmp);
-      buffer += '\n';
-      buffer += tmp;
-    }
-    if(buffer.empty())
-      return false;
-    buffer += '\n';
-    return true;
+    ipos = append_line(is, buffer, 0);
+    while(is.good() && is.peek() != EOF && is.peek() != '>')
+      ipos = append_line(is, buffer, ipos);
+    return ipos > 0;
   }
 };
 
@@ -124,6 +120,7 @@ int split_main(int argc, char* argv[]) {
     }
 
     for(auto& pipe : pipes) {
+      if(pipe.fd == -1) continue;
       if(FD_ISSET(pipe.fd, &output_set) && !pipe.append_sequence(input))
         pipe.close();
     }

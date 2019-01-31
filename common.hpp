@@ -76,4 +76,5 @@ EngineT seeded_prg(const char* save = nullptr, const char* load = nullptr)
   return res;
 }
 
+size_t append_line(std::istream& is, std::vector<char>& buf, size_t off);
 #endif /* __COMMON_H__ */
