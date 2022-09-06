@@ -15,39 +15,60 @@ fail() {
 }
 
 EXPECT_EQ() {
-    test "$1" = "$2" && success "$3" || fail "$3. Expected '$1' got '$2'"
+    if test "$1" = "$2";
+    then success "$3"
+    else fail "$3. Expected '$1' got '$2'"
+    fi
 }
 
 EXPECT_NE() {
-    test "$1" != "$2" && success "$3" || fail "$3. Expected '$1' got '$2'"
+    if test "$1" != "$2";
+    then success "$3"
+    else fail "$3. Expected '$1' got '$2'"
+    fi
 }
 
 EXPECT_GT() {
-    test "$1" -gt "$2" && success "$3" || fail "$3. Expected '$1' > '$2'"
+    if test "$1" -gt "$2";
+    then success "$3"
+    else fail "$3. Expected '$1' > '$2'"
+    fi
 }
 
 EXPECT_GE() {
-    test "$1" -ge "$2" && success "$3" || fail "$3. Expected '$1' >= '$2'"
+    if test "$1" -ge "$2";
+    then success "$3: $1 >= $2"
+    else fail "$3. Expected '$1' >= '$2'"
+    fi
 }
 
 EXPECT_LT() {
-    test "$1" -lt "$2" && success "$3" || fail "$3. Expected '$1' < '$2'"
+    if test "$1" -lt "$2";
+    then success "$3"
+    else fail "$3. Expected '$1' < '$2'"
+    fi
 }
 
 EXPECT_LE() {
-    test "$1" -le "$2" && success "$3" || fail "$3. Expected '$1' <= '$2'"
+    if test "$1" -le "$2";
+    then success "$3"
+    else fail "$3. Expected '$1' <= '$2'"
+    fi
 }
 
 
 EXPECT_SUCCESS() {
-    test "$?" = "0" && success "$1" || fail "$1"
+    if test "$?" = "0";
+    then success "$1"
+    else fail "$1"
+    fi
 }
 
 set +o | grep pipefail > /dev/null && set -o pipefail
 set -o errexit
 
 TEST1=$SRCDIR/tests/test1.fasta
-PATH=$BUILDIR:$PATH
+PATH=$BUILDDIR:$PATH
 LANG=C # For sorting
 
 echo -n "pwd: "; pwd

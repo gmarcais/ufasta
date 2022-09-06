@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
+AM_DEFAULT_SOURCE_EXT = .cc
 
 AM_CPPFLAGS = -Wall -I$(srcdir)
 AM_CXXFLAGS = $(ALL_CXXFLAGS) -g -O3
@@ -43,6 +44,8 @@ tests/testsh: tests/testsh.in
 	$(AM_V_GEN)sed -e 's,[@]SRCDIR[@],$(abs_srcdir),g' \
 	               -e 's,[@]BUILDDIR[@],$(abs_builddir),g' $< > $@
 	@chmod a+x $@
+
+check_PROGRAMS = random_sequence
 
 check_SCRIPTS = tests/testsh
 CLEANFILES += $(check_SCRIPTS)

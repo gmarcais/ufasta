@@ -7,9 +7,9 @@ AC_CONFIG_SRCDIR([.])
 AC_CONFIG_HEADERS([config.h])
 
 # Change default compilation flags
-AC_SUBST([ALL_CXXFLAGS], [-std=c++0x])
+AC_SUBST([ALL_CXXFLAGS], [-std=c++11])
 AC_LANG(C++)
-AC_PROG_CXX
+AC_PROG_CC
 CXXFLAGS="-std=c++0x $CXXFLAGS"
 
 # Check for mremap
